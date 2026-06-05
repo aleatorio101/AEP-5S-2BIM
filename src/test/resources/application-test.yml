@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:edualerta_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false   # Flyway desabilitado nos testes; Hibernate cuida do schema
+
+security:
+  jwt:
+    secret: dGVzdFNlY3JldEtleUZvclVuaXRUZXN0c09ubHlOb3RQcm9kdWN0aW9u
+    expiration-ms: 3600000
+
+app:
+  upload-dir: /tmp/edualerta-test-uploads
