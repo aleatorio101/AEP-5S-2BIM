@@ -6,11 +6,11 @@ import com.edualerta.domain.enums.Categoria;
 import com.edualerta.domain.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.edualerta.domain.enums.Urgencia;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -62,4 +62,6 @@ public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
             Pageable pageable);
 
     long countByStatus(Status status);
+
+    long countByUrgencia(Urgencia urgencia);
 }

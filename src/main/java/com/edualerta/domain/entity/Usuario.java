@@ -34,6 +34,15 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String senha;
 
+    @Column(length = 14)
+    private String cpf;
+
+    @Column(length = 20)
+    private String rg;
+
+    @Column(length = 9)
+    private String cep;
+
     private String telefone;
 
     @Enumerated(EnumType.STRING)

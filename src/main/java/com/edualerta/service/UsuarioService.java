@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.edualerta.dto.request.AtualizarMeRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +59,20 @@ public class UsuarioService {
     private Usuario findOrThrow(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public UsuarioResponse consultarMe(Usuario usuario) {
+        return UsuarioResponse.of(usuario);
+    }
+
+    @Transactional
+    public UsuarioResponse atualizarMe(Usuario usuario, AtualizarMeRequest request) {
+        usuario.setNome(request.nome());
+        usuario.setTelefone(request.telefone());
+        usuario.setCpf(request.cpf());
+        usuario.setRg(request.rg());
+        usuario.setCep(request.cep());
+        return UsuarioResponse.of(usuarioRepository.save(usuario));
     }
 }

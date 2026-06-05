@@ -66,6 +66,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/chamados/**").authenticated()
 
+                        .requestMatchers("/api/usuarios/me").authenticated()
+
 
                         .requestMatchers("/api/admin/**")
                             .hasAnyRole("ATENDENTE", "ADMIN")

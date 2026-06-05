@@ -7,5 +7,6 @@ public record EstatisticasResponse(
         long aguardandoRetorno,
         long resolvidos,
         long cancelados,
-        long abertos
+        long abertos,
+        long totalCriticos
 ) {}

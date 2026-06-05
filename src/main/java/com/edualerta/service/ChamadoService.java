@@ -6,6 +6,7 @@ import com.edualerta.domain.entity.Movimentacao;
 import com.edualerta.domain.entity.Usuario;
 import com.edualerta.domain.enums.Categoria;
 import com.edualerta.domain.enums.Status;
+import com.edualerta.domain.enums.Urgencia;
 import com.edualerta.dto.request.AbrirChamadoRequest;
 import com.edualerta.dto.request.AtualizarStatusRequest;
 import com.edualerta.dto.response.ChamadoDetalheResponse;
@@ -241,9 +242,10 @@ public class ChamadoService {
         long cancelados    = chamadoRepository.countByStatus(Status.CANCELADO);
         long total         = chamadoRepository.count();
         long abertos       = emAnalise + emAtendimento + aguardando;
+        long totalCriticos = chamadoRepository.countByUrgencia(Urgencia.CRITICA);
 
         return new EstatisticasResponse(
-                total, emAnalise, emAtendimento, aguardando, resolvidos, cancelados, abertos);
+                total, emAnalise, emAtendimento, aguardando, resolvidos, cancelados, abertos, totalCriticos);
     }
 
     private Chamado findDetailOrThrow(String protocolo) {
