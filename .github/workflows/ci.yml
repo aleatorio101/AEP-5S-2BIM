@@ -1,10 +1,16 @@
 name: EduAlerta CI/CD
 
 on:
+
   push:
     branches: [main, develop]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 
 env:
   REGISTRY: ghcr.io
