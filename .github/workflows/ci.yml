@@ -43,6 +43,9 @@ jobs:
           distribution: temurin
           cache: maven
 
+      - name: Dar permissão ao Maven Wrapper
+        run: chmod +x mvnw
+
       - name: Build e testes
         env:
           DB_HOST: localhost
