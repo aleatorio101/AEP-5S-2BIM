@@ -91,39 +91,45 @@ Acesse `http://localhost:8080/swagger-ui.html` após subir a aplicação.
 | POST   | `/api/auth/login`     | Login → retorna JWT        |
 
 ### Chamados (cidadão)
-| Método | Rota                                       | Descrição                          |
-|--------|--------------------------------------------|------------------------------------|
-| POST   | `/api/chamados`                            | Abrir chamado (autenticado)        |
-| POST   | `/api/chamados/anonimo`                    | Abrir chamado sem login            |
-| GET    | `/api/chamados/meus`                       | Meus chamados (filtros, paginação) |
-| GET    | `/api/chamados/acompanhar/{protocolo}`     | Acompanhar por protocolo (público) |
-| POST   | `/api/chamados/{protocolo}/evidencias`     | Anexar arquivo                     |
-| GET    | `/api/chamados/{protocolo}/evidencias/{id}`| Baixar arquivo                     |
+| Método | Rota                                        | Descrição                          |
+|--------|---------------------------------------------|------------------------------------|
+| POST   | `/api/chamados`                             | Abrir chamado (autenticado)        |
+| POST   | `/api/chamados/anonimo`                     | Abrir chamado sem login            |
+| GET    | `/api/chamados/meus`                        | Meus chamados (filtros, paginação) |
+| GET    | `/api/chamados/acompanhar/{protocolo}`      | Acompanhar por protocolo (público) |
+| POST   | `/api/chamados/{protocolo}/evidencias`      | Anexar arquivo                     |
+| GET    | `/api/chamados/{protocolo}/evidencias/{id}` | Baixar arquivo                     |
+
+### Perfil do usuário autenticado *(novo)*
+| Método | Rota               | Descrição                                     |
+|--------|--------------------|-----------------------------------------------|
+| GET    | `/api/usuarios/me` | Consultar próprios dados (nome, CPF, RG, CEP) |
+| PUT    | `/api/usuarios/me` | Atualizar próprios dados                      |
 
 ### Admin / Atendente
-| Método | Rota                                | Descrição                    |
-|--------|-------------------------------------|------------------------------|
-| GET    | `/api/admin/chamados`               | Listar todos (com filtros)   |
-| GET    | `/api/admin/chamados/{protocolo}`   | Detalhe do chamado           |
-| PATCH  | `/api/admin/chamados/{protocolo}/status` | Atualizar status        |
-| GET    | `/api/admin/estatisticas`           | Dashboard de totais          |
+| Método | Rota                                     | Descrição                    |
+|--------|------------------------------------------|------------------------------|
+| GET    | `/api/admin/chamados`                    | Listar todos (com filtros)   |
+| GET    | `/api/admin/chamados/{protocolo}`        | Detalhe do chamado           |
+| PATCH  | `/api/admin/chamados/{protocolo}/status` | Atualizar status             |
+| GET    | `/api/admin/estatisticas`                | Dashboard de totais          |
 
 ### Gestão de usuários (somente ADMIN)
-| Método | Rota                              | Descrição            |
-|--------|-----------------------------------|----------------------|
-| GET    | `/api/admin/usuarios`             | Listar usuários      |
-| GET    | `/api/admin/usuarios/{id}`        | Buscar por ID        |
-| PATCH  | `/api/admin/usuarios/{id}/role`   | Alterar role         |
-| PATCH  | `/api/admin/usuarios/{id}/desativar` | Desativar conta   |
-| PATCH  | `/api/admin/usuarios/{id}/reativar`  | Reativar conta    |
+| Método | Rota                                 | Descrição          |
+|--------|--------------------------------------|--------------------|
+| GET    | `/api/admin/usuarios`                | Listar usuários    |
+| GET    | `/api/admin/usuarios/{id}`           | Buscar por ID      |
+| PATCH  | `/api/admin/usuarios/{id}/role`      | Alterar role       |
+| PATCH  | `/api/admin/usuarios/{id}/desativar` | Desativar conta    |
+| PATCH  | `/api/admin/usuarios/{id}/reativar`  | Reativar conta     |
 
 ### Referência (público)
-| Método | Rota                    | Descrição           |
-|--------|-------------------------|---------------------|
-| GET    | `/api/categorias`       | Lista de categorias |
-| GET    | `/api/enums/status`     | Status possíveis    |
-| GET    | `/api/enums/urgencias`  | Níveis de urgência  |
-| GET    | `/api/enums/tipos-usuario` | Tipos de usuário |
+| Método | Rota                       | Descrição            |
+|--------|----------------------------|----------------------|
+| GET    | `/api/categorias`          | Lista de categorias  |
+| GET    | `/api/enums/status`        | Status possíveis     |
+| GET    | `/api/enums/urgencias`     | Níveis de urgência   |
+| GET    | `/api/enums/tipos-usuario` | Tipos de usuário     |
 
 ---
 
@@ -151,13 +157,13 @@ Authorization: Bearer <token>
 src/main/java/com/edualerta/
 ├── config/          SecurityConfig, OpenApiConfig
 ├── controller/      AuthController, ChamadoController, AdminController,
-│                    AdminUsuarioController, EnumController
+│                    AdminUsuarioController, UsuarioController, EnumController
 ├── domain/
 │   ├── entity/      Usuario, Chamado, Movimentacao, Evidencia
 │   └── enums/       Categoria, Status, Urgencia, Role, TipoUsuario
 ├── dto/
 │   ├── request/     LoginRequest, RegisterRequest, AbrirChamadoRequest,
-│   │                AtualizarStatusRequest, AlterarRoleRequest
+│   │                AtualizarStatusRequest, AlterarRoleRequest, AtualizarMeRequest
 │   └── response/    AuthResponse, ChamadoResumoResponse, ChamadoDetalheResponse,
 │                    MovimentacaoResponse, EvidenciaResponse, EstatisticasResponse,
 │                    UsuarioResponse
@@ -185,12 +191,13 @@ Para habilitar o deploy automático, descomente a job `deploy` no workflow e con
 
 ## Migrações do banco (Flyway)
 
-| Arquivo                     | O que faz                               |
-|-----------------------------|-----------------------------------------|
-| `V1__create_tables.sql`     | Cria todas as tabelas e indexes         |
-| `V2__insert_initial_data.sql` | Insere usuários admin e atendente     |
+| Arquivo                       | O que faz                                           |
+|-------------------------------|-----------------------------------------------------|
+| `V1__create_tables.sql`       | Cria todas as tabelas e indexes                     |
+| `V2__insert_initial_data.sql` | Insere usuários admin e atendente                   |
+| `V3__add_usuario_campos.sql`  | Adiciona colunas `cpf`, `rg` e `cep` em `usuarios` |
 
-Para adicionar uma nova migration, crie `V3__descricao.sql` seguindo o padrão.
+Para adicionar uma nova migration, crie `V4__descricao.sql` seguindo o padrão.
 
 ---
 
