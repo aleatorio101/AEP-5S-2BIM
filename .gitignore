@@ -38,6 +38,7 @@ Thumbs.db
 uploads/
 
 # ── Variáveis de ambiente ─────────────────────────────────────────
+node_modules/
 .env
 .env.local
 .env.*.local

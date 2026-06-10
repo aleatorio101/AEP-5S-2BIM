@@ -8,14 +8,14 @@ VALUES
     (
         'Administrador',
         'admin@edualerta.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$M5jFZnny3.NeqPq7NuyReON/XXsGR47pIVOfw5rPDGphVdtz5l79i',
         'FUNCIONARIO',
         'ADMIN'
     ),
     (
         'Atendente Escola',
         'atendente@escola.com',
-        '$2a$10$TlL7lbJ.iuVb0.7A9Q5RxeL.D6mGI0HkfaXWvMX/1SxnrblQrNNwG',
+        '$2a$10$7RepGtu6ERAGI0TlDpsUmuvHsbrAFiIw6aABTfdBR6zTANzpXxnk2',
         'FUNCIONARIO',
         'ATENDENTE'
     );
