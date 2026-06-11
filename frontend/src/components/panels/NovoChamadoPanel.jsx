@@ -366,7 +366,6 @@ export default function NovoChamadoPanel() {
                 </div>
 
                 <div style={wS.actionRow}>
-                    <button type="button" style={wS.btnCancel}>❌ Cancelar</button>
                     <button type="button" style={wS.btnClear} onClick={resetarFormulario}>🗑️ Limpar formulário</button>
                     <button type="submit" disabled={loading} style={{ ...wS.btnSubmit, opacity: loading ? 0.7 : 1 }}>
                         {loading ? 'Enviando...' : '🚀 Enviar chamado'}
