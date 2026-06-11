@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import AuthPage from './pages/auth/AuthPage';
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -53,7 +53,6 @@ export default function App() {
   );
 }
 
-// Telas auxiliares simples
 function LoadingScreen() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F0F7F3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif' }}>

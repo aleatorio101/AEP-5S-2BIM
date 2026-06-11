@@ -1,74 +1,88 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { s } from '../../components/styles/authStyles';
 import { Eye, EyeOff, AlertIcon, CheckIcon, Spinner } from '../../components/ui/Icons';
 import Brand from '../../components/ui/Brand';
 import Field from '../../components/ui/Field';
 
-export default function LoginPage({ onSwitchToRegister, successMessage }) {
-  const { login } = useAuth();
-
-  const [form, setForm] = useState({ email: '', senha: '' });
+export default function LoginPage({ onSwitchToRegister, successMessage, onAcessarAnonimo, onBuscarProtocolo }) {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [protocoloBusca, setProtocoloBusca] = useState('');
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  function handleChange(e) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    if (erro) setErro('');
-  }
+  const { login } = useAuth();
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email || !form.senha) {
-      setErro('Preencha e-mail e senha.');
-      return;
-    }
-    setLoading(true);
     setErro('');
+    setLoading(true);
+
     try {
-      await login(form.email, form.senha);
+      await login(email, senha);
     } catch (err) {
-      setErro(err.message || 'E-mail ou senha incorretos.');
+      console.error(err);
+      if (err.response?.status === 403) {
+        setErro('Esta conta foi desativada pelo administrador.');
+      } else {
+        setErro('E-mail ou senha incorretos. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleBuscarProtocolo = (e) => {
+    e.preventDefault();
+    if (!protocoloBusca.trim()) return;
+    if (onBuscarProtocolo) onBuscarProtocolo(protocoloBusca.trim());
+  };
 
   return (
-    <div style={s.page}>
-      <div style={s.card}>
+    <div style={s.page || s.container || {}}>
+      <div style={s.card || {}}>
         <Brand />
-        <h1 style={s.heading}>Entrar na conta</h1>
-        <p style={s.subheading}>Sistema de chamados escolares</p>
+        
+        {successMessage && (
+          <div style={{ ...s.errorBox, backgroundColor: '#E2EFE7', color: '#1A6B3C', borderColor: '#D1E3D9', display: 'flex', gap: '8px', alignItems: 'center', padding: '10px', borderRadius: '6px', marginBottom: '15px' }} role="alert">
+            <CheckIcon /><span>{successMessage}</span>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} noValidate style={s.form}>
+        <form onSubmit={handleSubmit} style={s.form || {}}>
           <Field label="E-mail" htmlFor="email">
-            <input id="email" type="email" name="email" autoComplete="email" placeholder="seu@email.com"
-              value={form.email} onChange={handleChange}
-              style={{ ...s.input, ...(erro ? s.inputError : {}) }} />
+            <input 
+              id="email" 
+              type="email" 
+              placeholder="seu@email.com"
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required
+              style={s.input} 
+            />
           </Field>
 
           <Field label="Senha" htmlFor="senha">
             <div style={{ position: 'relative' }}>
-              <input id="senha" type={showPass ? 'text' : 'password'} name="senha" autoComplete="current-password" placeholder="••••••••"
-                value={form.senha} onChange={handleChange}
-                style={{ ...s.input, paddingRight: '44px', ...(erro ? s.inputError : {}) }} />
-              <button type="button" onClick={() => setShowPass(v => !v)} style={s.eyeBtn}
-                aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}>
+              <input 
+                id="senha" 
+                type={showPass ? 'text' : 'password'} 
+                placeholder="••••••••"
+                value={senha} 
+                onChange={(e) => setSenha(e.target.value)} 
+                required
+                style={{ ...s.input, paddingRight: '44px' }} 
+              />
+              <button type="button" onClick={() => setShowPass(v => !v)} style={s.eyeBtn} aria-label={showPass ? 'Ocultar senha' : 'Mostrar senha'}>
                 {showPass ? <EyeOff /> : <Eye />}
               </button>
             </div>
           </Field>
 
-          {successMessage && (
-            <div style={s.successBox} role="status">
-              <CheckIcon /><span>{successMessage}</span>
-            </div>
-          )}
-
           {erro && (
-            <div style={s.errorBox} role="alert">
+            <div style={s.errorBox || {}} role="alert">
               <AlertIcon /><span>{erro}</span>
             </div>
           )}
@@ -78,16 +92,36 @@ export default function LoginPage({ onSwitchToRegister, successMessage }) {
           </button>
         </form>
 
-        <div style={s.divider}>
-          <span style={s.dividerLine} />
-          <span style={s.dividerText}>ou</span>
-          <span style={s.dividerLine} />
+        <div style={s.divider || { display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+          <span style={s.dividerLine || { flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
+          <span style={s.dividerText || { padding: '0 10px', color: '#A3B8AC', fontSize: '12px' }}>ou</span>
+          <span style={s.dividerLine || { flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
         </div>
 
-        <p style={s.registerText}>
+        <p style={s.loginText || { textAlign: 'center', fontSize: '14px' }}>
           Não tem conta?{' '}
-          <button type="button" onClick={onSwitchToRegister} style={s.linkBtn}>Criar conta gratuita</button>
+          <button type="button" onClick={onSwitchToRegister} style={s.linkBtn}>Cadastre-se</button>
         </p>
+
+        {/* --- ADICIONADO: SEÇÃO DE ACESSO ANÔNIMO INTEGRADO --- */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0 15px 0' }}>
+          <span style={{ flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
+          <span style={{ padding: '0 10px', color: '#A3B8AC', fontSize: '11px', fontWeight: 'bold' }}>ACESSO PÚBLICO</span>
+          <span style={{ flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <button 
+            type="button" 
+            onClick={onAcessarAnonimo} 
+            style={{ ...s.btnPrimary, backgroundColor: '#FFFFFF', color: '#1A6B3C', border: '1px solid #1A6B3C' }}
+          >
+            📢 Relatar Incidente Anônimo
+          </button>
+
+          
+        </div>
+
       </div>
     </div>
   );
