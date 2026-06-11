@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { chamadoService } from '../../services/api';
 
@@ -55,26 +55,44 @@ export default function NovoChamadoPanel() {
     const { user } = useAuth();
     const fileInputRef = useRef(null);
 
-    const [form, setForm] = useState({
+    const estadoInicialForm = {
         nomeCompleto: user?.nome || '',
         telefoneContato: user?.telefone || '',
         emailContato: user?.email || '',
         anonimo: 'Não',
         categoria: '',
         urgencia: '',
-        bloco: '',
-        sala: '',
+        bloco: BLOCOS[0],
+        sala: SALAS[0],
         dataOcorrencia: '',
         horarioOcorrencia: '',
         titulo: '',
         descricao: '',
         consentimentoVeridico: false,
         consentimentoPrivacidade: false
-    });
+    };
 
+    const [form, setForm] = useState(estadoInicialForm);
     const [arquivo, setArquivo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [feedback, setFeedback] = useState(null);
+
+    // Efeito para ajustar campos ao alternar anonimato
+    useEffect(() => {
+        if (form.anonimo === 'Sim') {
+            setForm(prev => ({
+                ...prev,
+                nomeCompleto: 'Anônimo',
+                telefoneContato: ''
+            }));
+        } else {
+            setForm(prev => ({
+                ...prev,
+                nomeCompleto: user?.nome || '',
+                telefoneContato: user?.telefone || ''
+            }));
+        }
+    }, [form.anonimo, user]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -88,6 +106,12 @@ export default function NovoChamadoPanel() {
         if (e.target.files && e.target.files[0]) {
             setArquivo(e.target.files[0]);
         }
+    };
+
+    const resetarFormulario = () => {
+        setForm(estadoInicialForm);
+        setArquivo(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     const handleSubmit = async (e) => {
@@ -116,12 +140,11 @@ export default function NovoChamadoPanel() {
                 bloco: form.bloco && form.bloco !== BLOCOS[0] ? form.bloco : null,
                 sala: form.sala && form.sala !== SALAS[0] ? form.sala : null,
                 dataOcorrencia: form.dataOcorrencia || null,
-                horarioOcorrencia: form.horarioOcorrencia ? form.horarioOcorrencia + ":00" : null, // LocalTime (HH:mm:ss)
+                horarioOcorrencia: form.horarioOcorrencia ? form.horarioOcorrencia + ":00" : null,
                 consentimento: true
             };
 
             let resposta;
-
             if (payload.anonimo) {
                 resposta = await chamadoService.abrirAnonimo(payload);
             } else {
@@ -142,14 +165,7 @@ export default function NovoChamadoPanel() {
             }
 
             setFeedback({ type: 'success', msg: `Chamado enviado com sucesso! Guarde seu Protocolo: ${resposta.protocolo}` });
-
-            setForm(prev => ({
-                ...prev,
-                anonimo: 'Não', categoria: '', urgencia: '', bloco: '', sala: '',
-                dataOcorrencia: '', horarioOcorrencia: '', titulo: '', descricao: '',
-                consentimentoVeridico: false, consentimientoPrivacidade: false
-            }));
-            setArquivo(null);
+            resetarFormulario();
 
         } catch (err) {
             setFeedback({ type: 'error', msg: err.message || 'Erro ao enviar dados do chamado.' });
@@ -187,18 +203,33 @@ export default function NovoChamadoPanel() {
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>1</span> Identificação do Usuário</div>
                         <div style={wS.cardBody}>
                             <div style={wS.inputRow}>
-                                
                                 <div style={wS.inputGroup}>
                                     <label style={wS.label}>Telefone para Contato</label>
-                                    <input type="text" name="telefoneContato" value={form.telefoneContato} onChange={handleChange} placeholder="(00) 00000-0000" style={wS.input} />
+                                    <input 
+                                        type="text" 
+                                        name="telefoneContato" 
+                                        value={form.telefoneContato} 
+                                        onChange={handleChange} 
+                                        placeholder="(00) 00000-0000" 
+                                        style={wS.input} 
+                                        disabled={form.anonimo === 'Sim'}
+                                    />
                                 </div>
                             </div>
                             <div style={wS.inputGroup}>
                                 <label style={wS.label}>Nome Completo</label>
-                                <input type="text" name="nomeCompleto" value={form.nomeCompleto} onChange={handleChange} placeholder="Digite seu nome completo" style={wS.input} />
+                                <input 
+                                    type="text" 
+                                    name="nomeCompleto" 
+                                    value={form.nomeCompleto} 
+                                    onChange={handleChange} 
+                                    placeholder="Digite seu nome completo" 
+                                    style={wS.input} 
+                                    disabled={form.anonimo === 'Sim'}
+                                />
                             </div>
                             <div style={wS.inputGroup}>
-                                <label style={wS.label}>E-mail</label>
+                                <label style={wS.label}>{form.anonimo === 'Sim' ? 'E-mail para Retorno (Obrigatório Anônimo)' : 'E-mail'}</label>
                                 <input type="email" name="emailContato" value={form.emailContato} onChange={handleChange} placeholder="exemplo@email.com" style={wS.input} />
                             </div>
                         </div>
@@ -235,7 +266,7 @@ export default function NovoChamadoPanel() {
                                     <button
                                         key={cat.value}
                                         type="button"
-                                        onClick={() => setForm(prev => ({ ...prev, categoria: cat.value }))}
+                                        onClick={() => setForm(prev => ({ ...prev, category: cat.value, categoria: cat.value }))}
                                         style={{ ...wS.categoryCard, borderColor: form.categoria === cat.value ? '#1A6B3C' : '#D1E3D9', backgroundColor: form.categoria === cat.value ? '#F0F7F3' : '#FFFFFF' }}
                                     >
                                         <span style={wS.categoryIcon}>{cat.icon}</span>
@@ -274,10 +305,10 @@ export default function NovoChamadoPanel() {
                     <div style={wS.cardBody}>
                         <div style={wS.row4Col}>
                             <div style={wS.inputGroup}><label style={wS.label}>Bloco / Setor</label>
-                                <select name="bloco" value={form.bloco} onChange={handleChange} style={wS.select}>{BLOCOS.map(b => <option key={b}>{b}</option>)}</select>
+                                <select name="bloco" value={form.bloco} onChange={handleChange} style={wS.select}>{BLOCOS.map(b => <option key={b} value={b}>{b}</option>)}</select>
                             </div>
                             <div style={wS.inputGroup}><label style={wS.label}>Sala</label>
-                                <select name="sala" value={form.sala} onChange={handleChange} style={wS.select}>{SALAS.map(s => <option key={s}>{s}</option>)}</select>
+                                <select name="sala" value={form.sala} onChange={handleChange} style={wS.select}>{SALAS.map(s => <option key={s} value={s}>{s}</option>)}</select>
                             </div>
                             <div style={wS.inputGroup}><label style={wS.label}>Data da ocorrência</label>
                                 <input type="date" name="dataOcorrencia" value={form.dataOcorrencia} onChange={handleChange} style={wS.input} />
@@ -295,7 +326,7 @@ export default function NovoChamadoPanel() {
                         <div style={wS.cardBody}>
                             <div style={wS.inputGroup}>
                                 <label style={wS.label}>Título do chamado</label>
-                                <input type="text" name="titulo" value={form.titulo} onChange={handleChange} placeholder="Resuma o problema em poucas palavras" style={wS.input} maxLength={100} />
+                                <input type="text" name="titulo" value={form.titulo} onChange={handleChange} placeholder="Resuma o problem em poucas palavras" style={wS.input} maxLength={100} />
                             </div>
                             <div style={wS.inputGroup}>
                                 <label style={wS.label}>Descrição detalhada</label>
@@ -336,7 +367,7 @@ export default function NovoChamadoPanel() {
 
                 <div style={wS.actionRow}>
                     <button type="button" style={wS.btnCancel}>❌ Cancelar</button>
-                    <button type="button" style={wS.btnClear} onClick={() => setForm(prev => ({ ...prev, titulo: '', descricao: '', categoria: '', urgencia: '', bloco: '', sala: '', dataOcorrencia: '', horarioOcorrencia: '', consentimentoVeridico: false, consentimentoPrivacidade: false }))}>🗑️ Limpar formulário</button>
+                    <button type="button" style={wS.btnClear} onClick={resetarFormulario}>🗑️ Limpar formulário</button>
                     <button type="submit" disabled={loading} style={{ ...wS.btnSubmit, opacity: loading ? 0.7 : 1 }}>
                         {loading ? 'Enviando...' : '🚀 Enviar chamado'}
                     </button>
@@ -477,7 +508,6 @@ const wS = {
         fontSize: '14px',
         backgroundColor: '#FFFFFF',
         outline: 'none',
-        appearance: 'none',
     },
     textarea: {
         padding: '12px 14px',
