@@ -5,6 +5,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import CidadaoChamadosPanel from './components/panels/CidadaoChamadosPanel';
 import MeusDadosPanel from './components/panels/MeusDadosPanel';
 import AjudaPanel from './components/panels/AjudaPanel';
+import NovoChamadoPanel from './components/panels/NovoChamadoPanel';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -25,14 +26,11 @@ export default function App() {
       case 'meus_chamados':
         return <CidadaoChamadosPanel />;
       case 'novo_chamado':
-        return (
-          <div style={styles.cardPlaceholder}>
-            <h2 style={styles.title}>Novo Chamado</h2>
-            <p style={styles.text}>Formulário de abertura de solicitações em desenvolvimento...</p>
-          </div>
-        );
+        return <NovoChamadoPanel />;  
       case 'meus_dados':
         return <MeusDadosPanel />;
+      case 'ajuda':
+        return <AjudaPanel />;
       default:
         return (
           <div style={styles.cardPlaceholder}>
@@ -40,14 +38,6 @@ export default function App() {
             <p style={styles.text}>Esta seção estará disponível em breve.</p>
           </div>
         );
-        case 'ajuda':
-      return <AjudaPanel />;
-      return (
-        <div style={styles.cardPlaceholder}>
-          <h2 style={styles.title}>Em Construção</h2>
-          <p style={styles.text}>Esta seção estará disponível em breve.</p>
-        </div>
-      );
     }
   }
 

@@ -6,20 +6,31 @@ function getToken() {
 
 async function request(path, options = {}) {
   const token = getToken();
+  
   const headers = {
-    'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
+
+  if (!(options.body instanceof FormData)) {
+    if (!headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    }
+  } else {
+    delete headers['Content-Type'];
+  }
+
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+  
   if (!res.ok) {
     let errorMessage = `Erro ${res.status}`;
     try {
       const data = await res.json();
-      errorMessage = data.message || data.erro || errorMessage;
+      errorMessage = data.message || data.erro || data.detail || errorMessage;
     } catch { }
     throw new Error(errorMessage);
   }
+  
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
@@ -37,11 +48,23 @@ export const usuarioService = {
     request('/usuarios/me', { method: 'PUT', body: JSON.stringify(dados) }),
 };
 
-export default request;
-
 export const chamadoService = {
-  abrir: (dados) => 
+  abrirAutenticado: (dados) => 
     request('/chamados', { method: 'POST', body: JSON.stringify(dados) }),
+
+  abrirAnonimo: (dados) => 
+    request('/chamados/anonimo', { method: 'POST', body: JSON.stringify(dados) }),
+
+  enviarEvidencia: (protocolo, arquivo) => {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+  
+    return request(`/chamados/${protocolo}/evidencias`, {
+      method: 'POST',
+      body: formData
+    });
+  },
+
   meus: (filtros = {}) => {
     const params = new URLSearchParams();
     if (filtros.page !== undefined) params.append('page', filtros.page);
@@ -65,3 +88,5 @@ export const adminService = {
     return request(`/admin/chamados${queryString}`);
   }
 };
+
+export default request;
