@@ -38,7 +38,7 @@ class AuthServiceTest {
     void setUp() {
         validRequest = new RegisterRequest(
                 "João Silva", "joao@escola.com", "senha123",
-                "(44) 99999-9999", TipoUsuario.ALUNO);
+                "(44) 99999-9999", TipoUsuario.ALUNO, null, null, null);
     }
 
     @Test
