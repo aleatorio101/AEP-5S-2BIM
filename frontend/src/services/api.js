@@ -78,6 +78,7 @@ export const chamadoService = {
 
 export const adminService = {
   getEstatisticas: () => request('/admin/estatisticas'),
+  
   listarTodos: (filtros = {}) => {
     const params = new URLSearchParams();
     if (filtros.page !== undefined) params.append('page', filtros.page);
@@ -90,11 +91,32 @@ export const adminService = {
 
     return request(`/admin/chamados?${params.toString()}`);
   },
+  
   buscarPorProtocolo: (protocolo) =>
     request(`/admin/chamados/${protocolo}`),
 
   atualizarStatus: (protocolo, dados) =>
-    request(`/admin/chamados/${protocolo}/status`, { method: 'PATCH', body: JSON.stringify(dados) })
+    request(`/admin/chamados/${protocolo}/status`, { method: 'PATCH', body: JSON.stringify(dados) }),
+
+  listarUsuarios: (page = 0, size = 10) => 
+    request(`/admin/usuarios?page=${page}&size=${size}`),
+
+  alterarRole: (id, novaRole) => 
+    request(`/admin/usuarios/${id}/role`, { 
+      method: 'PATCH', 
+      body: JSON.stringify({ role: novaRole }) 
+    }),
+
+  desativarUsuario: (id) => 
+    request(`/admin/usuarios/${id}/desativar`, { 
+      method: 'PATCH' 
+    }),
+
+  reativarUsuario: (id) => 
+    request(`/admin/usuarios/${id}/reativar`, { 
+      method: 'PATCH' 
+    })
 };
+
 
 export default request;
