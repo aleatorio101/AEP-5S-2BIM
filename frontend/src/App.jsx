@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext';
 import AuthPage from './pages/auth/AuthPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import CidadaoChamadosPanel from './components/panels/CidadaoChamadosPanel';
+import MeusDadosPanel from './components/panels/MeusDadosPanel';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -30,12 +31,7 @@ export default function App() {
           </div>
         );
       case 'meus_dados':
-        return (
-          <div style={styles.cardPlaceholder}>
-            <h2 style={styles.title}>Meus Dados</h2>
-            <p style={styles.text}>Tela de perfil do usuário em desenvolvimento...</p>
-          </div>
-        );
+        return <MeusDadosPanel />;
       default:
         return (
           <div style={styles.cardPlaceholder}>

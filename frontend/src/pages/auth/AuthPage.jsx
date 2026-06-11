@@ -12,20 +12,15 @@ export default function AuthPage() {
     setView('login');
   }
 
-  // Lógica quando o cidadão clica em "Relatar Incidente Anônimo"
   function handleAcessoAnonimo() {
     setView('chamado_anonimo');
-    // Futuramente, você pode renderizar o formulário público aqui ou disparar um evento para o App.jsx
   }
 
-  // Lógica quando o cidadão digita o protocolo e clica em Buscar
   function handleBuscarProtocolo(protocolo) {
     setProtocoloBuscado(protocolo);
     setView('acompanhar_protocolo');
-    // Futuramente, você usará esse 'protocolo' para fazer o GET na API pública
   }
 
-  // 1. Tela de Cadastro
   if (view === 'register') {
     return (
       <RegisterPage
@@ -35,7 +30,6 @@ export default function AuthPage() {
     );
   }
 
-  // 2. Tela de Abertura de Chamado Anônimo (Estado Novo)
   if (view === 'chamado_anonimo') {
     return (
       <div style={styles.devContainer}>
@@ -46,7 +40,6 @@ export default function AuthPage() {
     );
   }
 
-  // 3. Tela de Acompanhar por Protocolo (Estado Novo)
   if (view === 'acompanhar_protocolo') {
     return (
       <div style={styles.devContainer}>
@@ -58,7 +51,6 @@ export default function AuthPage() {
     );
   }
 
-  // Default: Tela de Login (Com as novas funções mapeadas nas propriedades corretas)
   return (
     <LoginPage
       onSwitchToRegister={() => { setSuccessMsg(''); setView('register'); }}
@@ -69,7 +61,6 @@ export default function AuthPage() {
   );
 }
 
-// Estilos temporários apenas para você ver os novos painéis funcionando ao clicar nos botões anônimos
 const styles = {
   devContainer: {
     padding: '40px',

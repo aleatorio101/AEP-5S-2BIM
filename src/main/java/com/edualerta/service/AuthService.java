@@ -37,6 +37,9 @@ public class AuthService {
                 .senha(passwordEncoder.encode(request.senha()))
                 .telefone(request.telefone())
                 .tipoUsuario(request.tipoUsuario())
+                .cpf(request.cpf())
+                .rg(request.rg()) 
+                .cep(request.cep())
                 .role(Role.CIDADAO)
                 .ativo(true)
                 .build();
@@ -49,14 +52,12 @@ public class AuthService {
                 usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getRole(),
-                usuario.getTipoUsuario()
-        );
+                usuario.getTipoUsuario());
     }
 
     public AuthResponse login(LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.senha())
-        );
+                new UsernamePasswordAuthenticationToken(request.email(), request.senha()));
 
         Usuario usuario = (Usuario) auth.getPrincipal();
         String token = jwtService.gerarToken(usuario);
@@ -66,7 +67,6 @@ public class AuthService {
                 usuario.getNome(),
                 usuario.getEmail(),
                 usuario.getRole(),
-                usuario.getTipoUsuario()
-        );
+                usuario.getTipoUsuario());
     }
 }

@@ -1,10 +1,7 @@
 package com.edualerta.dto.request;
 
 import com.edualerta.domain.enums.TipoUsuario;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record RegisterRequest(
 
@@ -22,5 +19,17 @@ public record RegisterRequest(
         String telefone,
 
         @NotNull(message = "Tipo de usuário é obrigatório")
-        TipoUsuario tipoUsuario
+        TipoUsuario tipoUsuario,
+
+        @NotBlank(message = "CPF é obrigatório")
+        @Size(min = 11, max = 11, message = "CPF deve ter 11 dígitos")
+        String cpf,
+
+        @NotBlank(message = "RG é obrigatório")
+        @Size(max = 20, message = "RG muito longo")
+        String rg,
+
+        @NotBlank(message = "CEP é obrigatório")
+        @Size(min = 8, max = 8, message = "CEP deve ter 8 dígitos")
+        String cep
 ) {}

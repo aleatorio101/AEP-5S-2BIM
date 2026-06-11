@@ -68,11 +68,15 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponse atualizarMe(Usuario usuario, AtualizarMeRequest request) {
-        usuario.setNome(request.nome());
-        usuario.setTelefone(request.telefone());
-        usuario.setCpf(request.cpf());
-        usuario.setRg(request.rg());
-        usuario.setCep(request.cep());
+        if (request.rg() != null) {
+            usuario.setRg(request.rg());
+        }
+        if (request.telefone() != null) {
+            usuario.setTelefone(request.telefone());
+        }
+        if (request.cep() != null) {
+            usuario.setCep(request.cep());
+        }
         return UsuarioResponse.of(usuarioRepository.save(usuario));
     }
 }
