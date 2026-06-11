@@ -11,7 +11,6 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
     { id: 'novo_chamado', label: 'Novo Chamado', icon: '➕' },
     { id: 'meus_dados', label: 'Meus Dados', icon: '👤' },
     { id: 'ajuda', label: 'Ajuda', icon: '❓' },
-    { id: 'configuracoes', label: 'Configurações', icon: '⚙️' },
   ];
 
   return (
