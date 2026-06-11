@@ -333,7 +333,6 @@ export default function MeusDadosPanel() {
       )}
 
       <div style={pS.wrapper}>
-        {/* Coluna esquerda — avatar + nome */}
         <div style={pS.leftCol}>
           <div style={pS.avatarCircle}>
             <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style={pS.avatarSvg}>
@@ -344,7 +343,6 @@ export default function MeusDadosPanel() {
           <p style={pS.avatarName}>{usuario?.nome?.split(' ')[0] || 'Usuário'}</p>
         </div>
 
-        {/* Coluna direita — campos */}
         <div style={pS.rightCol}>
           <FieldRow
             label="CPF"

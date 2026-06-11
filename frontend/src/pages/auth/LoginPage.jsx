@@ -102,27 +102,7 @@ export default function LoginPage({ onSwitchToRegister, successMessage, onAcessa
           Não tem conta?{' '}
           <button type="button" onClick={onSwitchToRegister} style={s.linkBtn}>Cadastre-se</button>
         </p>
-
-        {/* --- ADICIONADO: SEÇÃO DE ACESSO ANÔNIMO INTEGRADO --- */}
-        <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0 15px 0' }}>
-          <span style={{ flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
-          <span style={{ padding: '0 10px', color: '#A3B8AC', fontSize: '11px', fontWeight: 'bold' }}>ACESSO PÚBLICO</span>
-          <span style={{ flex: 1, height: '1px', backgroundColor: '#E2EFE7' }} />
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <button 
-            type="button" 
-            onClick={onAcessarAnonimo} 
-            style={{ ...s.btnPrimary, backgroundColor: '#FFFFFF', color: '#1A6B3C', border: '1px solid #1A6B3C' }}
-          >
-            📢 Relatar Incidente Anônimo
-          </button>
-
-          
-        </div>
-
       </div>
-    </div>
   );
 }

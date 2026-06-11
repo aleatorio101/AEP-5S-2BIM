@@ -59,7 +59,7 @@ export default function NovoChamadoPanel() {
         nomeCompleto: user?.nome || '',
         telefoneContato: user?.telefone || '',
         emailContato: user?.email || '',
-        anonimo: 'Não', // Padrão do wireframe
+        anonimo: 'Não',
         categoria: '',
         urgencia: '',
         bloco: '',
@@ -160,7 +160,6 @@ export default function NovoChamadoPanel() {
 
     return (
         <div style={wS.pageContainer}>
-            {/* Cabeçalho Principal (Réplica do Wireframe) */}
             <div style={wS.headerSection}>
                 <div style={wS.headerLeft}>
                     <IconHeader />
@@ -183,9 +182,7 @@ export default function NovoChamadoPanel() {
 
             <form onSubmit={handleSubmit} style={wS.formBody}>
 
-                {/* Linha 1: Seções 1 e 2 */}
                 <div style={wS.row}>
-                    {/* 1. Identificação do Usuário */}
                     <div style={{ ...wS.card, flex: 2 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>1</span> Identificação do Usuário</div>
                         <div style={wS.cardBody}>
@@ -207,7 +204,6 @@ export default function NovoChamadoPanel() {
                         </div>
                     </div>
 
-                    {/* 2. Opção de Anonimato */}
                     <div style={{ ...wS.card, flex: 1 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>2</span> Opção de Anonimato</div>
                         <div style={wS.cardBody}>
@@ -224,9 +220,7 @@ export default function NovoChamadoPanel() {
                     </div>
                 </div>
 
-                {/* Linha 2: Seções 3 e 4 */}
                 <div style={wS.row}>
-                    {/* 3. Categoria do Chamado (Grid de Ícones) */}
                     <div style={{ ...wS.card, flex: 2 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>3</span> Categoria do Chamado</div>
                         <div style={wS.cardBody}>
@@ -252,7 +246,6 @@ export default function NovoChamadoPanel() {
                         </div>
                     </div>
 
-                    {/* 4. Nível de Urgência */}
                     <div style={{ ...wS.card, flex: 1 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>4</span> Nível de Urgência</div>
                         <div style={wS.cardBody}>
@@ -276,7 +269,6 @@ export default function NovoChamadoPanel() {
                     </div>
                 </div>
 
-                {/* 5. Local da Ocorrência */}
                 <div style={wS.card}>
                     <div style={wS.cardHeader}><span style={wS.cardNumber}>5</span> Local da Ocorrência</div>
                     <div style={wS.cardBody}>
@@ -297,9 +289,7 @@ export default function NovoChamadoPanel() {
                     </div>
                 </div>
 
-                {/* Linha 4: Seções 6 e 7 */}
                 <div style={wS.row}>
-                    {/* 6. Descrição do Problema */}
                     <div style={{ ...wS.card, flex: 2 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>6</span> Descrição do Problema</div>
                         <div style={wS.cardBody}>
@@ -315,7 +305,6 @@ export default function NovoChamadoPanel() {
                         </div>
                     </div>
 
-                    {/* 7. Evidências (Upload Area) */}
                     <div style={{ ...wS.card, flex: 1 }}>
                         <div style={wS.cardHeader}><span style={wS.cardNumber}>7</span> Evidências</div>
                         <div style={wS.cardBody}>
@@ -331,7 +320,6 @@ export default function NovoChamadoPanel() {
                     </div>
                 </div>
 
-                {/* 8. Consentimento */}
                 <div style={wS.card}>
                     <div style={wS.cardHeader}><span style={wS.cardNumber}>8</span> Consentimento</div>
                     <div style={wS.cardBody}>
@@ -346,7 +334,6 @@ export default function NovoChamadoPanel() {
                     </div>
                 </div>
 
-                {/* Botões de Ação */}
                 <div style={wS.actionRow}>
                     <button type="button" style={wS.btnCancel}>❌ Cancelar</button>
                     <button type="button" style={wS.btnClear} onClick={() => setForm(prev => ({ ...prev, titulo: '', descricao: '', categoria: '', urgencia: '', bloco: '', sala: '', dataOcorrencia: '', horarioOcorrencia: '', consentimentoVeridico: false, consentimentoPrivacidade: false }))}>🗑️ Limpar formulário</button>

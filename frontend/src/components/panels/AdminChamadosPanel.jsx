@@ -678,7 +678,7 @@ const styles = {
             fontSize: '13px',
             color: '#2C3E35',
             lineHeight: '1.4',
-            whiteSpace: 'pre-wrap', // Preserva as quebras de linha que o cidadão digitou
+            whiteSpace: 'pre-wrap',
         },
         evidenceGrid: {
             display: 'flex',
@@ -718,19 +718,18 @@ const styles = {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         },
-        // Adicione junto com os outros estilos de evidência lá embaixo:
         evidenceLink: {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '4px',
-            textDecoration: 'none', // Remove o sublinhado azul do link
+            textDecoration: 'none',
             color: 'inherit',
             width: '100%',
             height: '100%',
         },
         evidenceCard: {
-            width: '100px', // Aumentei ligeiramente para caber o texto de ação
+            width: '100px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

@@ -83,7 +83,6 @@ export default function AdminUsuariosPanel() {
                 </td>
                 <td style={styles.td}>{user.cpf || 'Não informado'}</td>
                 
-                {/* Modificação de Role Nativa via Select */}
                 <td style={styles.td}>
                   <select
                     value={user.role}

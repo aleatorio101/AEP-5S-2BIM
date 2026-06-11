@@ -71,7 +71,7 @@ export default function RegisterPage({ onSwitchToLogin, onSuccess }) {
       nome: form.nome,
       email: form.email,
       senha: form.senha,
-      telefone: form.telefone.replace(/\D/g, ''), // opcional: limpa o telefone também
+      telefone: form.telefone.replace(/\D/g, ''),
       tipoUsuario: form.tipoUsuario,
       cpf: form.cpf.replace(/\D/g, ''),
       rg: form.rg.trim(),

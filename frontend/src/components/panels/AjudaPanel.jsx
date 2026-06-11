@@ -125,7 +125,6 @@ export default function AjudaPanel() {
 
   return (
     <div style={dS.container}>
-      {/* Cabeçalho */}
       <div style={dS.headerRow}>
         <div>
           <h1 style={dS.title}>Perguntas e Respostas (FAQ)</h1>
@@ -133,7 +132,6 @@ export default function AjudaPanel() {
         </div>
       </div>
 
-      {/* Input de Busca */}
       <div style={styles.searchContainer}>
         <div style={styles.searchWrapper}>
           <SearchIcon />
@@ -147,7 +145,6 @@ export default function AjudaPanel() {
         </div>
       </div>
 
-      {/* Categorias */}
       <div style={styles.categoryTitle}>Categorias</div>
       <div style={styles.categoryGrid}>
         {CATEGORIES.map(cat => (
@@ -172,7 +169,6 @@ export default function AjudaPanel() {
         ))}
       </div>
 
-      {/* Lista de Acordeões do FAQ */}
       <div style={styles.faqList}>
         {filteredFaqs.length > 0 ? (
           filteredFaqs.map(faq => {
@@ -219,7 +215,6 @@ export default function AjudaPanel() {
         )}
       </div>
 
-      {/* Caixa de rodapé: Ainda precisa de ajuda? */}
       <div style={styles.footerBox}>
         <div style={styles.footerLeft}>
           <div style={styles.headsetCircle}>
