@@ -31,6 +31,22 @@ export default function App() {
         return <MeusDadosPanel />;
       case 'ajuda':
         return <AjudaPanel />;
+        
+      case 'admin_chamados':
+        return (
+          <div style={styles.cardPlaceholder}>
+            <h2 style={styles.title}>Painel de Gestão de Chamados</h2>
+            <p style={styles.text}>Tela de monitoramento e atendimento em desenvolvimento...</p>
+          </div>
+        );
+      case 'admin_relatorios':
+        return (
+          <div style={styles.cardPlaceholder}>
+            <h2 style={styles.title}>Relatórios Estatísticos</h2>
+            <p style={styles.text}>Módulo de extração de relatórios e totais em desenvolvimento...</p>
+          </div>
+        );
+        
       default:
         return (
           <div style={styles.cardPlaceholder}>

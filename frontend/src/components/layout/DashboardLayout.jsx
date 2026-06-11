@@ -5,13 +5,24 @@ import { dS } from '../styles/dashboardStyles';
 export default function DashboardLayout({ children, activeTab, setActiveTab }) {
   const { user, logout } = useAuth();
 
-  const menuItems = [
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'ATENDENTE';
+
+  const userMenuItems = [
     { id: 'inicio', label: 'Início', icon: '🏠' },
     { id: 'meus_chamados', label: 'Meus Chamados', icon: '📖' },
     { id: 'novo_chamado', label: 'Novo Chamado', icon: '➕' },
     { id: 'meus_dados', label: 'Meus Dados', icon: '👤' },
     { id: 'ajuda', label: 'Ajuda', icon: '❓' },
   ];
+
+  const adminMenuItems = [
+    { id: 'inicio', label: 'Início', icon: '🏠' },
+    { id: 'admin_chamados', label: 'Chamados', icon: '📋' },
+    { id: 'admin_relatorios', label: 'Relatórios', icon: '📊' },
+    { id: 'ajuda', label: 'Ajuda', icon: '❓' },
+  ];
+
+  const menuItems = isAdmin ? adminMenuItems : userMenuItems;
 
   return (
     <div style={dS.layoutContainer}>
@@ -24,6 +35,7 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
             </svg>
           </div>
           <span style={dS.brandName}>EduAlerta</span>
+          {isAdmin && <span style={styles.adminBadge}>ADMIN</span>}
         </div>
 
         <nav style={dS.navigation}>
@@ -33,13 +45,16 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                style={dS.menuButton}
+                style={dS.menuButton} 
               >
-                {}
                 {isActive && <div style={dS.activeIndicator} />}
+
                 <span style={dS.icon}>{item.icon}</span>
-                {}
-                <span style={{ ...dS.label, fontWeight: '500' }}>
+                <span style={{
+                  ...dS.label,
+                  fontWeight: isActive ? '700' : '500',
+                  color: isActive ? '#1A6B3C' : '#5C6B63'
+                }}>
                   {item.label}
                 </span>
               </button>
@@ -50,7 +65,9 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
         <div style={dS.sidebarFooter}>
           <div style={dS.userInfo}>
             <p style={dS.userName}>{user?.nome || 'Usuário'}</p>
-            <p style={dS.userRole}>{user?.tipoUsuario || 'Cidadão'}</p>
+            <p style={dS.userRole}>
+              {isAdmin ? (user?.role === 'ADMIN' ? 'Administrador' : 'Atendente') : (user?.tipoUsuario || 'Cidadão')}
+            </p>
           </div>
           <button onClick={logout} style={dS.btnLogout}>
             🚪 Sair da conta
@@ -65,4 +82,16 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
       </main>
     </div>
   );
+}
+
+const styles = {
+  adminBadge: {
+    fontSize: '10px',
+    backgroundColor: '#1A6B3C',
+    color: '#FFF',
+    padding: '2px 6px',
+    borderRadius: '4px',
+    fontWeight: '800',
+    marginLeft: 'auto'
+  }
 }
