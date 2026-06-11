@@ -15,6 +15,7 @@ import com.edualerta.dto.response.EstatisticasResponse;
 import com.edualerta.exception.BusinessException;
 import com.edualerta.exception.ResourceNotFoundException;
 import com.edualerta.repository.ChamadoRepository;
+import com.edualerta.repository.spec.ChamadoSpec;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -139,8 +141,8 @@ public class ChamadoService {
             LocalDateTime inicio, LocalDateTime fim, String busca,
             Pageable pageable) {
 
-        return chamadoRepository
-                .findMeusChamados(usuario, status, categoria, inicio, fim, busca, pageable)
+        Specification<Chamado> spec = ChamadoSpec.filtrar(usuario, status, categoria, inicio, fim, busca);
+        return chamadoRepository.findAll(spec, pageable)
                 .map(ChamadoResumoResponse::of);
     }
 
@@ -150,8 +152,8 @@ public class ChamadoService {
             LocalDateTime inicio, LocalDateTime fim, String busca,
             Pageable pageable) {
 
-        return chamadoRepository
-                .findAllFiltered(status, categoria, inicio, fim, busca, pageable)
+        Specification<Chamado> spec = ChamadoSpec.filtrar(null, status, categoria, inicio, fim, busca);
+        return chamadoRepository.findAll(spec, pageable)
                 .map(ChamadoResumoResponse::of);
     }
 
