@@ -118,12 +118,7 @@ export const adminService = {
     })
 };
 
-export const publicService = {
-  listarCategorias: () => request('/categorias'),
-  listarStatusEnums: () => request('/enums/status'),
-  listarUrgenciasEnums: () => request('/enums/urgencias'),
-  listarTiposUsuarioEnums: () => request('/enums/tipos-usuario'),
-};
+
 
 
 export default request;
