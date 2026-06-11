@@ -6,6 +6,7 @@ import CidadaoChamadosPanel from './components/panels/CidadaoChamadosPanel';
 import MeusDadosPanel from './components/panels/MeusDadosPanel';
 import AjudaPanel from './components/panels/AjudaPanel';
 import NovoChamadoPanel from './components/panels/NovoChamadoPanel';
+import AdminChamadosPanel from './components/panels/AdminChamadosPanel';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -26,12 +27,15 @@ export default function App() {
       case 'meus_chamados':
         return <CidadaoChamadosPanel />;
       case 'novo_chamado':
-        return <NovoChamadoPanel />;  
+        return <NovoChamadoPanel />;
       case 'meus_dados':
         return <MeusDadosPanel />;
       case 'ajuda':
         return <AjudaPanel />;
-        
+      case 'admin_chamados':
+        return <AdminChamadosPanel />;
+
+
       case 'admin_chamados':
         return (
           <div style={styles.cardPlaceholder}>
@@ -46,7 +50,7 @@ export default function App() {
             <p style={styles.text}>Módulo de extração de relatórios e totais em desenvolvimento...</p>
           </div>
         );
-        
+
       default:
         return (
           <div style={styles.cardPlaceholder}>

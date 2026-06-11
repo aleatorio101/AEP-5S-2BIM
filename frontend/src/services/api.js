@@ -6,7 +6,7 @@ function getToken() {
 
 async function request(path, options = {}) {
   const token = getToken();
-  
+
   const headers = {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
@@ -21,7 +21,7 @@ async function request(path, options = {}) {
   }
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
-  
+
   if (!res.ok) {
     let errorMessage = `Erro ${res.status}`;
     try {
@@ -30,7 +30,7 @@ async function request(path, options = {}) {
     } catch { }
     throw new Error(errorMessage);
   }
-  
+
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
@@ -49,16 +49,16 @@ export const usuarioService = {
 };
 
 export const chamadoService = {
-  abrirAutenticado: (dados) => 
+  abrirAutenticado: (dados) =>
     request('/chamados', { method: 'POST', body: JSON.stringify(dados) }),
 
-  abrirAnonimo: (dados) => 
+  abrirAnonimo: (dados) =>
     request('/chamados/anonimo', { method: 'POST', body: JSON.stringify(dados) }),
 
   enviarEvidencia: (protocolo, arquivo) => {
     const formData = new FormData();
     formData.append('arquivo', arquivo);
-  
+
     return request(`/chamados/${protocolo}/evidencias`, {
       method: 'POST',
       body: formData
@@ -70,7 +70,7 @@ export const chamadoService = {
     if (filtros.page !== undefined) params.append('page', filtros.page);
     if (filtros.size !== undefined) params.append('size', filtros.size);
     if (filtros.status) params.append('status', filtros.status);
-    
+
     const queryString = params.toString() ? `?${params.toString()}` : '';
     return request(`/chamados/meus${queryString}`);
   }
@@ -83,10 +83,18 @@ export const adminService = {
     if (filtros.page !== undefined) params.append('page', filtros.page);
     if (filtros.size !== undefined) params.append('size', filtros.size);
     if (filtros.status) params.append('status', filtros.status);
-    
-    const queryString = params.toString() ? `?${params.toString()}` : '';
-    return request(`/admin/chamados${queryString}`);
-  }
+    if (filtros.categoria) params.append('categoria', filtros.categoria);
+    if (filtros.inicio) params.append('inicio', filtros.inicio);
+    if (filtros.fim) params.append('fim', filtros.fim);
+    if (filtros.busca) params.append('busca', filtros.busca);
+
+    return request(`/admin/chamados?${params.toString()}`);
+  },
+  buscarPorProtocolo: (protocolo) =>
+    request(`/admin/chamados/${protocolo}`),
+
+  atualizarStatus: (protocolo, dados) =>
+    request(`/admin/chamados/${protocolo}/status`, { method: 'PATCH', body: JSON.stringify(dados) })
 };
 
 export default request;
