@@ -7,6 +7,7 @@ import MeusDadosPanel from './components/panels/MeusDadosPanel';
 import AjudaPanel from './components/panels/AjudaPanel';
 import NovoChamadoPanel from './components/panels/NovoChamadoPanel';
 import AdminChamadosPanel from './components/panels/AdminChamadosPanel';
+import AdminRelatoriosPanel from './components/panels/AdminRelatoriosPanel';
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -34,6 +35,8 @@ export default function App() {
         return <AjudaPanel />;
       case 'admin_chamados':
         return <AdminChamadosPanel />;
+        case 'admin_relatorios':
+        return <AdminRelatoriosPanel />;
 
 
       case 'admin_chamados':
