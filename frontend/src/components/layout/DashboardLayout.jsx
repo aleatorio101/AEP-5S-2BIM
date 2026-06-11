@@ -19,8 +19,8 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
         <div style={dS.brand}>
           <div style={dS.logoIcon}>
             <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
-              <path d="M14 3L3 9v10l11 6 11-6V9L14 3z" fill="#1A6B3C"/>
-              <path d="M9 13l3 3 7-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M14 3L3 9v10l11 6 11-6V9L14 3z" fill="#1A6B3C" />
+              <path d="M9 13l3 3 7-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
           <span style={dS.brandName}>EduAlerta</span>
@@ -33,11 +33,13 @@ export default function DashboardLayout({ children, activeTab, setActiveTab }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                style={{ ...dS.menuButton, ...(isActive ? dS.menuButtonActive : {}) }}
+                style={dS.menuButton}
               >
+                {}
                 {isActive && <div style={dS.activeIndicator} />}
                 <span style={dS.icon}>{item.icon}</span>
-                <span style={{ ...dS.label, fontWeight: isActive ? '600' : '500' }}>
+                {}
+                <span style={{ ...dS.label, fontWeight: '500' }}>
                   {item.label}
                 </span>
               </button>
