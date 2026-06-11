@@ -118,7 +118,4 @@ export const adminService = {
     })
 };
 
-
-
-
 export default request;
