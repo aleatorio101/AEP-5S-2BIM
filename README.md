@@ -62,6 +62,15 @@ docker compose up db -d
 # 2. Execute a aplicação
 ./mvnw spring-boot:run
 ```
+## Executar front do projeto
+
+```bash
+# 1. abra o cmd na pasta /frontend
+npm install
+
+# 2. depois no mesmo cmd
+npm run dev
+```
 
 ---
 
