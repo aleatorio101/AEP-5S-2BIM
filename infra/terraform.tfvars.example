@@ -1,0 +1,11 @@
+# Copie para terraform.tfvars e preencha com valores reais.
+# NUNCA commite terraform.tfvars (já está no .gitignore abaixo).
+
+aws_region      = "us-east-1"
+project_name    = "edualerta"
+environment     = "dev"
+container_image = "ghcr.io/aleatorio101/edualerta:latest"
+
+# Sensível — prefira exportar como variável de ambiente:
+# export TF_VAR_db_password="sua-senha-forte-aqui"
+# db_password = "troque-isso"

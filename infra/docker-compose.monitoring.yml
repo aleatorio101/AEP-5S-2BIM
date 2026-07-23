@@ -1,0 +1,33 @@
+# Adicione estes serviços ao seu docker-compose.yml existente
+# (ou rode com: docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up)
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: edualerta-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: edualerta-grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+
+volumes:
+  prometheus-data:
+    name: edualerta-prometheus-data
+  grafana-data:
+    name: edualerta-grafana-data

@@ -1,120 +1,118 @@
-name: EduAlerta CI/CD
+name: CI/CD
 
 on:
-
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main]
-
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
+    branches: [main, develop]
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/edualerta-api
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
-
-  # ─── Build & Test ────────────────────────────────────────────────────────────
-  build-test:
-    name: Build e Testes
+  # ─── Build e testes da aplicação ──────────────────────────────────────
+  build-and-test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: edualerta_test
-          POSTGRES_USER: edualerta
-          POSTGRES_PASSWORD: edualerta
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Configurar JDK 21
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
           distribution: temurin
+          java-version: "21"
           cache: maven
 
-      - name: Dar permissão ao Maven Wrapper
-        run: chmod +x mvnw
+      - name: Rodar testes
+        run: ./mvnw test -B
 
-      - name: Build e testes
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: edualerta_test
-          DB_USER: edualerta
-          DB_PASS: edualerta
-          JWT_SECRET: dGVzdFNlY3JldEtleUZvckNJUGlwZWxpbmVUZXN0aW5nT25seQ==
-        run: ./mvnw verify -q
+      - name: Build da aplicação
+        run: ./mvnw package -DskipTests -B
 
-      - name: Publicar relatório de testes
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Testes JUnit
-          path: target/surefire-reports/*.xml
-          reporter: java-junit
-
-  # ─── Docker Build & Push ─────────────────────────────────────────────────────
-  docker:
-    name: Build Docker Image
+  # ─── Build da imagem Docker + scan de vulnerabilidades ────────────────
+  docker-build-scan:
     runs-on: ubuntu-latest
-    needs: build-test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build-and-test
     permissions:
       contents: read
       packages: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Login no GitHub Container Registry
+      - name: Login no GHCR
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extrair metadata da imagem
-        id: meta
-        uses: docker/metadata-action@v5
+      - name: Build da imagem
+        uses: docker/build-push-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,prefix=sha-
-            type=raw,value=latest,enable=true
+          context: .
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          load: true
 
-      - name: Build e push da imagem Docker
+      - name: Trivy scan de vulnerabilidades
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: 0 # troque para 1 para bloquear o pipeline em caso de achado crítico
+
+      - name: Push da imagem (somente main)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
 
-  # ─── Deploy (opcional — ajuste para seu servidor) ─────────────────────────────
+  # ─── Terraform plan (validação de infra em PRs) ───────────────────────
+  terraform-plan:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      # Para rodar "terraform plan" de verdade, configure os secrets
+      # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY e TF_VAR_db_password
+      # e descomente o passo abaixo:
+      #
+      # - name: Terraform plan
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
+      #   run: terraform plan -no-color
+
+  # ─── Deploy (opcional, hoje comentado) ────────────────────────────────
   # deploy:
-  #   name: Deploy em Produção
   #   runs-on: ubuntu-latest
-  #   needs: docker
-  #   environment: production
-  #
+  #   needs: [docker-build-scan, terraform-plan]
+  #   if: github.ref == 'refs/heads/main'
   #   steps:
   #     - name: Deploy via SSH
   #       uses: appleboy/ssh-action@v1
@@ -123,6 +121,5 @@ jobs:
   #         username: ${{ secrets.SERVER_USER }}
   #         key: ${{ secrets.SERVER_SSH_KEY }}
   #         script: |
-  #           cd /opt/edualerta
   #           docker compose pull
-  #           docker compose up -d --remove-orphans
+  #           docker compose up -d

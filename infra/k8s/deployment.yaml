@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edualerta-api
+  labels:
+    app: edualerta-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: edualerta-api
+  template:
+    metadata:
+      labels:
+        app: edualerta-api
+    spec:
+      containers:
+        - name: edualerta-api
+          image: ghcr.io/aleatorio101/edualerta:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: edualerta-db
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: edualerta
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: edualerta-secrets
+                  key: db-user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: edualerta-secrets
+                  key: db-pass
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: edualerta-secrets
+                  key: jwt-secret
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: edualerta-secrets
+type: Opaque
+stringData:
+  db-user: edualerta
+  db-pass: troque-em-producao
+  jwt-secret: troque-em-producao
